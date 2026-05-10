@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 // Simple admin auth — hardcoded credentials
 // Change these to your own secure password before deploying!
 const ADMIN_EMAIL = 'admin@saver.in';
-const ADMIN_PASSWORD = 'SaverAdmin@2025';
+const ADMIN_PASSWORD = 'Ambujacement@098';
 
 const AuthContext = createContext();
 export const useAdminAuth = () => useContext(AuthContext);
