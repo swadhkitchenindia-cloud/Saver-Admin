@@ -1,31 +1,64 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '../firebase/config';
+import { 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
+} from 'firebase/auth';
 
-// Simple admin auth — hardcoded credentials
-// Change these to your own secure password before deploying!
 const ADMIN_EMAIL = 'admin@saver.in';
-const ADMIN_PASSWORD = 'Ambujacement@098';
 
 const AuthContext = createContext();
 export const useAdminAuth = () => useContext(AuthContext);
 
 export function AdminAuthProvider({ children }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    () => sessionStorage.getItem('saver_admin') === 'true'
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const login = (email, password) => {
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      sessionStorage.setItem('saver_admin', 'true');
-      setIsLoggedIn(true);
+  useEffect(() => {
+    // Listen to real Firebase auth state
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user && user.email === ADMIN_EMAIL) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setLoading(false);
+    });
+    return unsub;
+  }, []);
+
+  const login = async (email, password) => {
+    if (email !== ADMIN_EMAIL) return false;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       return true;
+    } catch (e) {
+      console.error('Admin login error:', e.code, e.message);
+      return false;
     }
-    return false;
   };
 
-  const logout = () => {
-    sessionStorage.removeItem('saver_admin');
-    setIsLoggedIn(false);
+  const logout = async () => {
+    await signOut(auth);
   };
+
+  // Show spinner while checking auth state
+  if (loading) return (
+    <div style={{ 
+      minHeight: '100vh', display: 'flex', 
+      alignItems: 'center', justifyContent: 'center', 
+      background: '#085041' 
+    }}>
+      <div style={{ 
+        width: 32, height: 32, 
+        border: '3px solid rgba(255,255,255,0.3)', 
+        borderTopColor: 'white', borderRadius: '50%', 
+        animation: 'spin 0.7s linear infinite' 
+      }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
