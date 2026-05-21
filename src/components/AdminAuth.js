@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase/config';
-import { 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged 
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
 } from 'firebase/auth';
 
 const ADMIN_EMAIL = 'admin@saver.in';
-
 const AuthContext = createContext();
 export const useAdminAuth = () => useContext(AuthContext);
 
@@ -16,13 +15,8 @@ export function AdminAuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Listen to real Firebase auth state
     const unsub = onAuthStateChanged(auth, (user) => {
-      if (user && user.email === ADMIN_EMAIL) {
-        setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-      }
+      setIsLoggedIn(!!(user && user.email === ADMIN_EMAIL));
       setLoading(false);
     });
     return unsub;
@@ -43,18 +37,17 @@ export function AdminAuthProvider({ children }) {
     await signOut(auth);
   };
 
-  // Show spinner while checking auth state
   if (loading) return (
-    <div style={{ 
-      minHeight: '100vh', display: 'flex', 
-      alignItems: 'center', justifyContent: 'center', 
-      background: '#085041' 
+    <div style={{
+      minHeight: '100vh', display: 'flex',
+      alignItems: 'center', justifyContent: 'center',
+      background: '#085041'
     }}>
-      <div style={{ 
-        width: 32, height: 32, 
-        border: '3px solid rgba(255,255,255,0.3)', 
-        borderTopColor: 'white', borderRadius: '50%', 
-        animation: 'spin 0.7s linear infinite' 
+      <div style={{
+        width: 32, height: 32,
+        border: '3px solid rgba(255,255,255,0.3)',
+        borderTopColor: 'white', borderRadius: '50%',
+        animation: 'spin 0.7s linear infinite'
       }} />
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>

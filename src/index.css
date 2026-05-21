@@ -11,7 +11,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F5F2EC; color:
 }
 .admin-layout { display: flex; min-height: 100vh; }
 .sidebar { width: 240px; background: var(--green-dark); min-height: 100vh; display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; }
-.main { margin-left: 240px; flex: 1; min-height: 100vh; background: var(--bg); overflow-x: hidden; max-width: calc(100vw - 240px); }
+.main { margin-left: 240px; flex: 1; min-height: 100vh; background: var(--bg); }
 .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .sidebar-logo-name { font-size: 18px; font-weight: 800; color: white; }
 .sidebar-logo-sub { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }

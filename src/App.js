@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdminAuthProvider, useAdminAuth } from './components/AdminAuth';
 import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
@@ -11,7 +11,6 @@ import Payouts from './pages/Payouts';
 import './index.css';
 import { db } from './firebase/config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { useEffect } from 'react';
 
 function AdminApp() {
   const { isLoggedIn } = useAdminAuth();
@@ -20,13 +19,24 @@ function AdminApp() {
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    const q = query(collection(db, 'users'), where('verificationStatus', '==', 'pending'));
+    const q = query(
+      collection(db, 'users'),
+      where('verificationStatus', '==', 'pending')
+    );
     return onSnapshot(q, snap => setPendingCount(snap.size));
   }, [isLoggedIn]);
 
   if (!isLoggedIn) return <Login />;
 
-  const pages = { dashboard: Dashboard, restaurants: Restaurants, listings: Listings, orders: Orders, customers: Customers, payouts: Payouts };
+  const pages = {
+    dashboard: Dashboard,
+    restaurants: Restaurants,
+    listings: Listings,
+    orders: Orders,
+    customers: Customers,
+    payouts: Payouts,
+  };
+
   const PageComponent = pages[page] || Dashboard;
 
   return (
